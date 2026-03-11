@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
-  rabbit1:
-    image: rabbitmq:3.10.6-management
+  rabbitmq:
+    image: rabbitmq:4.1-management
     hostname: rabbit
     container_name: rabbit
     restart: always
@@ -14,3 +12,10 @@ services:
       - RABBITMQ_DEFAULT_PASS=123123
     volumes:
       - ./rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    entrypoint: >
+      bash -c "rabbitmq-plugins enable rabbitmq_delayed_message_exchange && rabbitmq-server"

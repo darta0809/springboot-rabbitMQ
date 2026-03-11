@@ -6,17 +6,21 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Slf4j
 @Component
 public class TopicConsumer {
 
-  @RabbitListener(queues = "TOPIC_QUEUE_1")
-  public void process(String content, Message message, Channel channel) {
-    log.info("Topic mode - received queue 1 message: {}", content);
-  }
+    @RabbitListener(queues = "TOPIC_QUEUE_1")
+    public void process(String content, Message message, Channel channel) throws IOException {
+        log.info("Topic mode - received queue 1 message: {}", content);
+        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+    }
 
-  @RabbitListener(queues = "TOPIC_QUEUE_2")
-  public void process2(String content, Message message, Channel channel) {
-    log.info("Topic mode - received queue 2 message: {}", content);
-  }
+    @RabbitListener(queues = "TOPIC_QUEUE_2")
+    public void process2(String content, Message message, Channel channel) throws IOException {
+        log.info("Topic mode - received queue 2 message: {}", content);
+        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+    }
 }
