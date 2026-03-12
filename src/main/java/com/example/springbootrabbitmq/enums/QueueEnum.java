@@ -13,7 +13,21 @@ public enum QueueEnum {
   TOPIC_QUEUE_2("TOPIC_QUEUE_2", "topic 測試 queue 2"),
 
   FANOUT_QUEUE_1("FANOUT_QUEUE_1", "fanout 測試 queue 1"),
-  FANOUT_QUEUE_2("FANOUT_QUEUE_2", "fanout 測試 queue 2");
+  FANOUT_QUEUE_2("FANOUT_QUEUE_2", "fanout 測試 queue 2"),
+
+  // 業務場景：訂單事件
+  ORDER_INVENTORY_QUEUE("ORDER_INVENTORY_QUEUE", "訂單-庫存服務"),
+  ORDER_NOTIFICATION_QUEUE("ORDER_NOTIFICATION_QUEUE", "訂單-通知服務"),
+  ORDER_LOG_QUEUE("ORDER_LOG_QUEUE", "訂單-日誌服務"),
+
+  // 業務場景：訂單事件 Topic 路由
+  ORDER_ALL_EVENT_QUEUE("ORDER_ALL_EVENT_QUEUE", "訂單-所有事件日誌"),
+  ORDER_CREATED_QUEUE("ORDER_CREATED_QUEUE", "訂單-建立事件"),
+  ORDER_PAID_QUEUE("ORDER_PAID_QUEUE", "訂單-付款事件"),
+  ORDER_CANCELLED_QUEUE("ORDER_CANCELLED_QUEUE", "訂單-取消事件"),
+
+  // 業務場景：Dead Letter Queue
+  ORDER_NOTIFICATION_DLQ("ORDER_NOTIFICATION_DLQ", "訂單-通知服務死信佇列");
 
   private final String code;
   private final String name;
