@@ -198,4 +198,45 @@ public class RabbitExchangeBinding {
     Binding bindingOrderNotificationDlq(Queue orderNotificationDlq, FanoutExchange orderDlx) {
         return BindingBuilder.bind(orderNotificationDlq).to(orderDlx);
     }
+
+    // ==================== 業務場景：延遲佇列 — 訂單超時取消 ====================
+
+    /**
+     * 延遲用的 DLX（Direct Exchange）
+     * 當 ORDER_DELAY_QUEUE 中的訊息 TTL 過期，會被轉發到這個交換機
+     */
+    @Bean
+    DirectExchange orderDelayDlx() {
+        return new DirectExchange(ExchangeEnum.ORDER_DELAY_DLX.getCode());
+    }
+
+    /**
+     * 延遲佇列：設定 TTL = 10 秒，無消費者監聽
+     * 訊息過期後自動轉發到 ORDER_DELAY_DLX，routing key 為 "order.delay.process"
+     */
+    @Bean
+    Queue orderDelayQueue() {
+        return QueueBuilder.durable(QueueEnum.ORDER_DELAY_QUEUE.getCode())
+                .ttl(10_000) // 10 秒
+                .deadLetterExchange(ExchangeEnum.ORDER_DELAY_DLX.getCode())
+                .deadLetterRoutingKey("order.delay.process")
+                .build();
+    }
+
+    /**
+     * 實際處理佇列：Consumer 監聽這個佇列，處理超時訂單
+     */
+    @Bean
+    Queue orderDelayProcessQueue() {
+        return new Queue(QueueEnum.ORDER_DELAY_PROCESS_QUEUE.getCode());
+    }
+
+    /**
+     * 將處理佇列綁定到延遲 DLX，routing key 對應 deadLetterRoutingKey
+     */
+    @Bean
+    Binding bindingOrderDelayProcess(Queue orderDelayProcessQueue, DirectExchange orderDelayDlx) {
+        return BindingBuilder.bind(orderDelayProcessQueue).to(orderDelayDlx)
+                .with("order.delay.process");
+    }
 }

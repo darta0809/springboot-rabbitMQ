@@ -2,6 +2,7 @@ package com.example.springbootrabbitmq.producer;
 
 import com.example.springbootrabbitmq.dto.OrderEvent;
 import com.example.springbootrabbitmq.enums.ExchangeEnum;
+import com.example.springbootrabbitmq.enums.QueueEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
@@ -48,6 +49,23 @@ public class OrderEventProducer {
         rabbitTemplate.convertAndSend(
                 ExchangeEnum.ORDER_TOPIC_EXCHANGE.getCode(),
                 routingKey,
+                orderEvent,
+                correlationData);
+    }
+
+    /**
+     * 場景 4：延遲佇列 — 訂單發送到 TTL Queue，等待過期後由 DLX 轉發
+     * 注意：直接發送到預設 Exchange（""），routing key 就是 Queue 名稱
+     */
+    public void sendDelayOrderEvent(OrderEvent orderEvent) {
+        CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
+        log.info("[訂單事件-延遲] 發送延遲訂單, correlationId: [{}], orderId: {}, 將在 10 秒後檢查付款狀態",
+                correlationData.getId(),
+                orderEvent.getOrderId());
+
+        rabbitTemplate.convertAndSend(
+                "",
+                QueueEnum.ORDER_DELAY_QUEUE.getCode(),
                 orderEvent,
                 correlationData);
     }

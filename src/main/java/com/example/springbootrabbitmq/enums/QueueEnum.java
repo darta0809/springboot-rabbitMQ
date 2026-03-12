@@ -27,7 +27,11 @@ public enum QueueEnum {
   ORDER_CANCELLED_QUEUE("ORDER_CANCELLED_QUEUE", "訂單-取消事件"),
 
   // 業務場景：Dead Letter Queue
-  ORDER_NOTIFICATION_DLQ("ORDER_NOTIFICATION_DLQ", "訂單-通知服務死信佇列");
+  ORDER_NOTIFICATION_DLQ("ORDER_NOTIFICATION_DLQ", "訂單-通知服務死信佇列"),
+
+  // 業務場景：延遲佇列 — 訂單超時取消
+  ORDER_DELAY_QUEUE("ORDER_DELAY_QUEUE", "訂單延遲佇列（TTL，無消費者）"),
+  ORDER_DELAY_PROCESS_QUEUE("ORDER_DELAY_PROCESS_QUEUE", "訂單延遲處理佇列（實際消費端）");
 
   private final String code;
   private final String name;

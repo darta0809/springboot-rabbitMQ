@@ -19,7 +19,10 @@ public enum ExchangeEnum {
   ORDER_TOPIC_EXCHANGE("ORDER_TOPIC_EXCHANGE", "訂單事件主題路由"),
 
   // 業務場景：Dead Letter Exchange
-  ORDER_DLX("ORDER_DLX", "訂單死信交換機");
+  ORDER_DLX("ORDER_DLX", "訂單死信交換機"),
+
+  // 業務場景：延遲佇列 — 訂單超時取消用的 DLX
+  ORDER_DELAY_DLX("ORDER_DELAY_DLX", "訂單延遲死信交換機");
   private final String code;
   private final String name;
 }
