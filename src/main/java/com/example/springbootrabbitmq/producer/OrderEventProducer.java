@@ -69,4 +69,26 @@ public class OrderEventProducer {
                 orderEvent,
                 correlationData);
     }
+
+    /**
+     * 場景 4b：延遲佇列（Plugin 方式）— 每條訊息可設定不同延遲時間
+     * 透過 x-delay header 告訴 Exchange 要延遲多久才路由
+     */
+    public void sendDelayedPluginOrderEvent(OrderEvent orderEvent, int delayMs) {
+        CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
+        log.info("[訂單事件-延遲Plugin] 發送延遲訂單, correlationId: [{}], orderId: {}, 延遲 {} 毫秒",
+                correlationData.getId(),
+                orderEvent.getOrderId(),
+                delayMs);
+
+        rabbitTemplate.convertAndSend(
+                ExchangeEnum.ORDER_DELAYED_EXCHANGE.getCode(),
+                "order.delayed",
+                orderEvent,
+                message -> {
+                    message.getMessageProperties().setDelayLong((long) delayMs);
+                    return message;
+                },
+                correlationData);
+    }
 }

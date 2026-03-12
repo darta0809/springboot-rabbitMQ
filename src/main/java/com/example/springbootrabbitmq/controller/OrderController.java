@@ -104,6 +104,23 @@ public class OrderController {
         return "訂單 " + orderId + " 已付款";
     }
 
+    /**
+     * 場景 4b：延遲佇列（Plugin）— 可自訂每筆訂單的延遲時間
+     * delayMs 參數：延遲毫秒數（預設 10000 = 10 秒）
+     */
+    @PostMapping("/delay-plugin")
+    public OrderEvent createDelayedPluginOrder(
+            @RequestParam String userId,
+            @RequestParam String productName,
+            @RequestParam Integer quantity,
+            @RequestParam BigDecimal amount,
+            @RequestParam(defaultValue = "10000") Integer delayMs) {
+
+        OrderEvent orderEvent = buildOrderEvent(userId, productName, quantity, amount);
+        orderEventProducer.sendDelayedPluginOrderEvent(orderEvent, delayMs);
+        return orderEvent;
+    }
+
     private OrderEvent buildOrderEvent(String userId, String productName, Integer quantity, BigDecimal amount) {
         return OrderEvent.builder()
                 .orderId(UUID.randomUUID().toString().substring(0, 8))

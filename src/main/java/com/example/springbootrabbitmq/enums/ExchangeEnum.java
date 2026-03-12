@@ -22,7 +22,10 @@ public enum ExchangeEnum {
   ORDER_DLX("ORDER_DLX", "訂單死信交換機"),
 
   // 業務場景：延遲佇列 — 訂單超時取消用的 DLX
-  ORDER_DELAY_DLX("ORDER_DELAY_DLX", "訂單延遲死信交換機");
+  ORDER_DELAY_DLX("ORDER_DELAY_DLX", "訂單延遲死信交換機"),
+
+  // 業務場景：延遲佇列 — Plugin 方式
+  ORDER_DELAYED_EXCHANGE("ORDER_DELAYED_EXCHANGE", "訂單延遲交換機（Plugin）");
   private final String code;
   private final String name;
 }

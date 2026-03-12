@@ -5,11 +5,14 @@ import com.example.springbootrabbitmq.enums.QueueEnum;
 import com.example.springbootrabbitmq.enums.RoutingKeyEnum;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.CustomExchange;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.core.TopicExchange;
+
+import java.util.Map;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -238,5 +241,35 @@ public class RabbitExchangeBinding {
     Binding bindingOrderDelayProcess(Queue orderDelayProcessQueue, DirectExchange orderDelayDlx) {
         return BindingBuilder.bind(orderDelayProcessQueue).to(orderDelayDlx)
                 .with("order.delay.process");
+    }
+
+    // ==================== 業務場景：延遲佇列 — Plugin 方式 ====================
+
+    /**
+     * x-delayed-message 類型的 Exchange
+     * 訊息會在 Exchange 層暫存，到達延遲時間後才路由到 Queue
+     * 內部路由類型設為 direct
+     */
+    @Bean
+    CustomExchange orderDelayedExchange() {
+        return new CustomExchange(
+                ExchangeEnum.ORDER_DELAYED_EXCHANGE.getCode(),
+                "x-delayed-message",    // 插件提供的 Exchange 類型
+                true,                    // durable
+                false,                   // autoDelete
+                Map.of("x-delayed-type", "direct")  // 實際路由方式
+        );
+    }
+
+    @Bean
+    Queue orderDelayedPluginQueue() {
+        return new Queue(QueueEnum.ORDER_DELAYED_PLUGIN_QUEUE.getCode());
+    }
+
+    @Bean
+    Binding bindingOrderDelayedPlugin(Queue orderDelayedPluginQueue, CustomExchange orderDelayedExchange) {
+        return BindingBuilder.bind(orderDelayedPluginQueue).to(orderDelayedExchange)
+                .with("order.delayed")
+                .noargs();
     }
 }

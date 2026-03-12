@@ -31,7 +31,10 @@ public enum QueueEnum {
 
   // 業務場景：延遲佇列 — 訂單超時取消
   ORDER_DELAY_QUEUE("ORDER_DELAY_QUEUE", "訂單延遲佇列（TTL，無消費者）"),
-  ORDER_DELAY_PROCESS_QUEUE("ORDER_DELAY_PROCESS_QUEUE", "訂單延遲處理佇列（實際消費端）");
+  ORDER_DELAY_PROCESS_QUEUE("ORDER_DELAY_PROCESS_QUEUE", "訂單延遲處理佇列（實際消費端）"),
+
+  // 業務場景：延遲佇列 — Plugin 方式
+  ORDER_DELAYED_PLUGIN_QUEUE("ORDER_DELAYED_PLUGIN_QUEUE", "訂單延遲佇列（Plugin 方式）");
 
   private final String code;
   private final String name;
