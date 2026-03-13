@@ -30,8 +30,8 @@ public class NotificationConsumer {
         try {
             log.info("[通知服務] 收到訂單事件 (第 {} 次嘗試): {}", retryCount + 1, content);
 
-            // 模擬失敗：故意拋出例外
-            simulateFailure();
+            // 模擬失敗：故意拋出例外（災難模擬時暫時關閉）
+            // simulateFailure();
 
             log.info("[通知服務] 通知發送完成");
             channel.basicAck(tag, false);
